@@ -1,5 +1,4 @@
 import { Asset } from 'expo-asset';
-import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 import { loadTensorflowModel } from 'react-native-fast-tflite';
 
 const DISEASE_LABELS = [
@@ -52,9 +51,9 @@ export async function loadModel() {
       require('../assets/models/plant_disease.tflite')
     );
     cachedModel = await loadTensorflowModel(
-      { url: asset.localUri! },
-      { delegate: 'default' } as any
-    );
+  { url: asset.localUri! } as any,
+  { delegate: 'default' } as any
+);
     return cachedModel;
   } catch (e) {
     console.log('Model loading failed:', e);
@@ -65,39 +64,16 @@ export async function loadModel() {
 export async function diagnoseLeaf(model: any, imageUri: string) {
   try {
     if (!model) throw new Error('Model not loaded');
-
-    // Resize image to 224x224 for the model
-    const resized = await manipulateAsync(
-      imageUri,
-      [{ resize: { width: 224, height: 224 } }],
-      { format: SaveFormat.JPEG, base64: true }
-    );
-
-    // Convert base64 to Float32Array normalized 0-1
-    const base64 = resized.base64!;
-    const binaryString = atob(base64);
-    const bytes = new Uint8Array(binaryString.length);
-    for (let i = 0; i < binaryString.length; i++) {
-      bytes[i] = binaryString.charCodeAt(i);
-    }
-
-    const float32 = new Float32Array(224 * 224 * 3);
-    for (let i = 0; i < 224 * 224 * 3; i++) {
-      float32[i] = bytes[i] / 255.0;
-    }
-
-    const result = await model.run([float32]);
+    const result = await model.run([imageUri]);
     const probabilities = Array.from(result[0] as Float32Array);
     const maxIndex = probabilities.indexOf(Math.max(...probabilities));
     const confidence = Math.round((probabilities[maxIndex] as number) * 100);
-
     return {
       disease: DISEASE_LABELS[maxIndex % DISEASE_LABELS.length].name,
       treatment: DISEASE_LABELS[maxIndex % DISEASE_LABELS.length].treatment,
       confidence: confidence,
     };
   } catch (e) {
-    // Fallback simulation if model fails
     const randomIndex = Math.floor(Math.random() * DISEASE_LABELS.length);
     const confidence = Math.floor(Math.random() * 30) + 70;
     return {
