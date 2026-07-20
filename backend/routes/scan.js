@@ -45,7 +45,9 @@ router.post('/analyse', auth, upload.single('image'), async (req, res) => {
               type: 'text',
               text: `You are an expert agricultural scientist specialising in Indian crop diseases.
 
-Analyse this image and respond ONLY with a JSON object — no thinking, no explanation, no extra text before or after. Just the raw JSON.
+Analyse this image briefly, then respond with ONLY a JSON object. Keep your internal reasoning short — a few sentences at most, then output the JSON immediately. Do not write a long analysis.
+
+Respond in this exact JSON format:
 
 {
   "isLeaf": true,
@@ -62,12 +64,12 @@ Analyse this image and respond ONLY with a JSON object — no thinking, no expla
 
 If NOT a plant leaf, return: {"isLeaf": false}
 
-Respond with ONLY the JSON object, nothing else.`,
+Be concise. Prioritise reaching the JSON output over lengthy analysis.`,
             },
           ],
         },
       ],
-      max_tokens: 1500,
+      max_tokens: 3000,
     });
 
     console.log('✅ Groq response received!');
