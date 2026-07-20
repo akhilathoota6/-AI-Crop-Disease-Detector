@@ -67,7 +67,7 @@ Respond with ONLY the JSON object, nothing else.`,
           ],
         },
       ],
-      max_tokens: 800,
+      max_tokens: 1500,
     });
 
     console.log('✅ Groq response received!');
@@ -76,12 +76,14 @@ Respond with ONLY the JSON object, nothing else.`,
 
     let aiResult;
     try {
-      // Remove thinking tags if present
       let cleanText = aiText.replace(/<think>[\s\S]*?<\/think>/g, '');
+      cleanText = cleanText.replace(/```json/g, '').replace(/```/g, '');
       const jsonMatch = cleanText.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) throw new Error('No JSON object found in response');
       aiResult = JSON.parse(jsonMatch[0]);
     } catch (e) {
       console.log('❌ Parsing failed:', e.message);
+      console.log('❌ Raw AI text was:', aiText);
       return res.status(500).json({ message: 'AI response parsing failed', raw: aiText });
     }
 
