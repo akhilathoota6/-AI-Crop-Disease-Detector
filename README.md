@@ -1,161 +1,111 @@
 # 🌶️ ChilliTrack — AI Crop Disease Detector
 
-> An offline-first mobile app that detects crop diseases instantly from a leaf photo using on-device AI. Built with React Native and TensorFlow Lite.
+> A full-stack platform that detects crop diseases instantly from a leaf photo using AI vision — available as a mobile app, a web app, and a REST API, all sharing one backend and database.
 
 ![React Native](https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
-![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
-![TensorFlow Lite](https://img.shields.io/badge/TensorFlow_Lite-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white)
-![Expo](https://img.shields.io/badge/Expo-000020?style=for-the-badge&logo=expo&logoColor=white)
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
 
 ---
 
 ## 📱 About
 
-ChilliTrack started as a solution for my family's chilli farm in India — where crop diseases spread faster than help arrives. Rural farmers often have **no internet access** in their fields, making cloud-based solutions useless.
-
-So I built an AI that lives entirely on the phone.
-
-**No internet. No server. No cost per scan. Just point and detect.**
+ChilliTrack started as a solution for my family's chilli farm in India — where crop diseases spread faster than help arrives. What began as an offline mobile prototype has grown into a full-stack platform: farmers can diagnose a leaf from their phone camera or from a browser, get a real AI-generated diagnosis with treatment advice, and have their scan history saved to their account.
 
 ---
 
 ## ✨ Features
 
-- 📷 **Live camera scanning** — point at any crop leaf and tap scan
-- 🧠 **On-device AI** — TensorFlow Lite model runs entirely on the phone
-- 🌿 **38 disease classes** across 14 crops
-- 💊 **Treatment recommendations** — actionable advice for each disease
-- 📶 **Works offline** — no internet connection required
-- ⚡ **Fast detection** — results in under 2 seconds
-- 🌙 **Dark theme** — optimised for outdoor use in sunlight
+- 📷 Live camera scanning (mobile) and photo upload (web) — same AI, two entry points
+- 🧠 Real AI vision diagnosis — powered by Groq's vision model, not a fixed lookup table
+- 🌍 Works for any crop — not limited to a pre-trained dataset; the AI reasons from what it sees
+- 🔐 User accounts — JWT authentication, farmers' scans are tied to their profile
+- 💊 Treatment, organic option, and prevention advice for every diagnosis
+- 🗄️ Scan history saved to MongoDB — every scan is logged with crop, disease, and confidence
+- ☁️ Deployed backend — live REST API on Render, works from any network
 
 ---
 
-## 🌱 Supported Crops & Diseases
+## 🛠️ Tech stack
 
-| Crop | Diseases Detected |
-|------|------------------|
-| 🌶️ Pepper | Bacterial Spot, Healthy |
-| 🍅 Tomato | Bacterial Spot, Early Blight, Late Blight, Leaf Mold, Septoria Leaf Spot, Spider Mites, Target Spot, Mosaic Virus, Yellow Leaf Curl Virus, Healthy |
-| 🌽 Corn | Gray Leaf Spot, Common Rust, Northern Leaf Blight, Healthy |
-| 🍎 Apple | Scab, Black Rot, Cedar Rust, Healthy |
-| 🍇 Grape | Black Rot, Esca, Leaf Blight, Healthy |
-| 🥔 Potato | Early Blight, Late Blight, Healthy |
-| 🍑 Peach | Bacterial Spot, Healthy |
-| 🍓 Strawberry | Leaf Scorch, Healthy |
-| 🫐 Blueberry | Healthy |
-| 🫘 Soybean | Healthy |
-| 🍊 Orange | Citrus Greening |
-| 🍒 Cherry | Powdery Mildew, Healthy |
-| 🥒 Squash | Powdery Mildew |
-| 🫐 Raspberry | Healthy |
+| Layer | Technology |
+|---|---|
+| Mobile app | React Native + Expo |
+| Web app | React.js (Vite) |
+| Backend | Node.js + Express |
+| Database | MongoDB Atlas |
+| AI | Groq (vision-capable LLM) |
+| Auth | JWT + bcrypt |
+| Deployment | Render (backend) |
 
 ---
 
-## 🛠️ Tech Stack
+## 🧠 How it works
 
-| Technology | Purpose |
-|-----------|---------|
-| React Native | Cross-platform mobile app (iOS + Android) |
-| TypeScript | Type-safe development |
-| Expo | Build tooling and deployment |
-| TensorFlow Lite | On-device AI inference |
-| expo-camera | Live camera access |
-| expo-image-manipulator | Image preprocessing for AI model |
-| EAS Build | Cloud build pipeline |
+Farmer opens the mobile app or web app, logs in (JWT issued and stored), then takes a photo or uploads a leaf image. That image is sent to the backend API on Render, which forwards it to Groq AI along with an expert-agronomist prompt. The AI returns a structured diagnosis — crop, disease, confidence, severity, treatment, organic option, and prevention. The backend saves that scan to MongoDB, tied to the farmer's account, and the result is displayed on whichever app made the request.
+
+If the photo isn't a plant leaf at all, the AI returns `isLeaf: false` and the app tells the farmer to try again — rather than guessing a fake diagnosis.
 
 ---
 
-## 🧠 How the AI Works
-**Model:** MobileNetV2 trained on PlantVillage dataset (54,000+ leaf images)
-**Model size:** ~4MB (bundled in app)
-**Inference time:** ~1-2 seconds on mid-range Android
+## 📸 Sample output
 
----
-
-## 📸 Sample Output
-
-Below is an example detection result from ChilliTrack, showing the app identifying a disease from a scanned leaf image.
-
-**Input:** Photo of a diseased grape leaf
-
-**Detection Result:**
+Input: photo of a diseased grape leaf
 
 | Field | Value |
-|-------|-------|
+|---|---|
 | Crop | Grape |
 | Disease | Anthracnose |
 | Confidence | High |
 
-**Description**
-> Irregular brown to reddish-brown necrotic spots on leaves, some showing light centers typical of bird's eye spots.
+**Description:** Irregular brown to reddish-brown necrotic spots on leaves, some showing light centers typical of bird's eye spots.
 
-**Treatment**
-- Spray with Bordeaux mixture or Mancozeb fungicide
+**Treatment:** Spray with Bordeaux mixture or Mancozeb fungicide
 
-**Organic Option**
-- Neem oil spray or *Pseudomonas fluorescens*
+**Organic option:** Neem oil spray or Pseudomonas fluorescens
 
-**Prevention**
-- Prune and burn infected plant debris to prevent carryover
+**Prevention:** Prune and burn infected plant debris to prevent carryover
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Getting started
 
 ### Prerequisites
 - Node.js 18+
-- Expo CLI
-- EAS CLI (for building)
+- A MongoDB Atlas connection string
+- A Groq API key
+- Expo CLI (for mobile)
 
-### Installation
+### Backend
+Navigate to the `backend` folder, run `npm install`, create a `.env` file with `PORT`, `MONGODB_URI`, `GROQ_API_KEY`, and `JWT_SECRET`, then run `node server.js`.
 
-```bash
-# Clone the repo
-git clone https://github.com/akhilathoota6/ChilliTrack.git
-cd ChilliTrack
+### Web app
+Navigate to the `web` folder, run `npm install`, then `npm run dev`.
 
-# Install dependencies
-npm install
-
-# Start development server
-npx expo start --dev-client
-```
-
-### Building the app
-
-```bash
-# Login to Expo
-eas login
-
-# Build for Android
-eas build --profile development --platform android
-```
+### Mobile app
+From the project root, run `npm install`, then `npx expo start --dev-client`.
 
 ---
 
-## 📁 Project Structure
----
+## 📁 Project structure
 
-## 💡 Why Offline-First?
-
-Rural farmers in India often work in areas with **zero mobile signal**. Traditional AI apps that send photos to a cloud server are completely useless in these conditions.
-
-By running the TensorFlow Lite model directly on the device:
-- ✅ Works with zero internet
-- ✅ No per-scan cost
-- ✅ Instant results
-- ✅ Privacy — photos never leave the device
-- ✅ Works anywhere on the farm
+- `app/` — Expo Router entry point (mobile)
+- `components/` — Mobile screens: Login, Register, Scan
+- `backend/server.js` — Express server entry point
+- `backend/routes/` — auth.js, scan.js
+- `backend/models/` — User.js, Scan.js
+- `backend/middleware/auth.js` — JWT verification
+- `web/src/` — Login.jsx, Register.jsx, Scan.jsx, App.jsx
 
 ---
 
 ## 🗺️ Roadmap
 
-- [ ] Real-time video scanning (no tap needed)
-- [ ] Scan history with field tagging
-- [ ] GPS-based disease spread mapping
-- [ ] Support for more crops (rice, wheat, sugarcane)
+- [ ] Scan history screen (view past diagnoses)
+- [ ] Photo storage via Cloudinary
+- [ ] Deploy web app to Vercel
+- [ ] Field/location tagging per scan
 - [ ] Multi-language support (Hindi, Telugu, Tamil)
 - [ ] Weather-based disease risk alerts
 
@@ -164,7 +114,7 @@ By running the TensorFlow Lite model directly on the device:
 ## 👨‍💻 Author
 
 **Akhil Athota**
-Masters Student | Full Stack Developer | AgriTech enthusiast
+Full Stack Developer | AgriTech enthusiast
 
 Built this to help my family's farm in India — and every other farmer who deserves better tools.
 
@@ -173,7 +123,3 @@ Built this to help my family's farm in India — and every other farmer who dese
 ## 📄 License
 
 MIT License — free to use, modify and distribute.
-
----
-
-*Built with ❤️ for farmers who deserve better technology*
