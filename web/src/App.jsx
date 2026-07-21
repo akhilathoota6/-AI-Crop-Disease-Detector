@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import History from './History';
 import Login from './Login';
 import Register from './Register';
 import Scan from './Scan';
@@ -8,6 +9,7 @@ export default function App() {
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [user, setUser] = useState(null);
   const [screen, setScreen] = useState('login');
+  const [view, setView] = useState('scan');
 
   useEffect(() => {
     const token = getToken();
@@ -21,6 +23,7 @@ export default function App() {
   function handleLogout() {
     logout();
     setUser(null);
+    setView('scan');
   }
 
   if (checkingAuth) {
@@ -28,7 +31,16 @@ export default function App() {
   }
 
   if (user) {
-    return <Scan user={user} onLogout={handleLogout} />;
+    if (view === 'history') {
+      return <History onBack={() => setView('scan')} />;
+    }
+    return (
+      <Scan
+        user={user}
+        onLogout={handleLogout}
+        onViewHistory={() => setView('history')}
+      />
+    );
   }
 
   if (screen === 'login') {
