@@ -67,28 +67,37 @@ So I built an AI that lives entirely on the phone.
 ---
 
 ## 🧠 How the AI Works
-
-```
-Farmer taps "Scan Leaf"
-        ↓
-Camera captures photo
-        ↓
-Image resized to 224×224px
-        ↓
-Normalized to Float32Array
-        ↓
-TFLite model runs inference (on-device)
-        ↓
-Softmax probabilities across 38 classes
-        ↓
-Highest confidence = detected disease
-        ↓
-Treatment recommendation shown
-```
-
 **Model:** MobileNetV2 trained on PlantVillage dataset (54,000+ leaf images)
 **Model size:** ~4MB (bundled in app)
 **Inference time:** ~1-2 seconds on mid-range Android
+
+---
+
+## 📸 Sample Output
+
+Below is an example detection result from ChilliTrack, showing the app identifying a disease from a scanned leaf image.
+
+**Input:** Photo of a diseased grape leaf
+
+**Detection Result:**
+
+| Field | Value |
+|-------|-------|
+| Crop | Grape |
+| Disease | Anthracnose |
+| Confidence | High |
+
+**Description**
+> Irregular brown to reddish-brown necrotic spots on leaves, some showing light centers typical of bird's eye spots.
+
+**Treatment**
+- Spray with Bordeaux mixture or Mancozeb fungicide
+
+**Organic Option**
+- Neem oil spray or *Pseudomonas fluorescens*
+
+**Prevention**
+- Prune and burn infected plant debris to prevent carryover
 
 ---
 
@@ -126,22 +135,6 @@ eas build --profile development --platform android
 ---
 
 ## 📁 Project Structure
-
-```
-ChilliTrack/
-├── app/
-│   ├── (tabs)/
-│   │   └── index.tsx          # Main tab screen
-│   └── _layout.tsx            # App layout
-├── components/
-│   ├── ScanScreen.tsx         # Camera + results UI
-│   └── inference.ts           # TFLite model + disease logic
-├── assets/
-│   └── models/
-│       └── plant_disease.tflite  # AI model (4MB)
-└── app.json                   # Expo config
-```
-
 ---
 
 ## 💡 Why Offline-First?
